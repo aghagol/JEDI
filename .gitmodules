@@ -1,0 +1,3 @@
+[submodule "lib/spams"]
+	path = lib/spams
+	url = git://github.com/samuelstjean/spams-python
