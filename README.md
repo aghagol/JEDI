@@ -5,6 +5,8 @@ This is the source code for my paper that is under revision in IEEE-Transactions
 
 #### Installation
 
+First, do `git clone --recursive https://github.com/aghagol/JEDI.git` where you want the local repo to be placed.
+
 I use [SPAMS](https://github.com/samuelstjean/spams-python) for LASSO optimization. SPAMS library is located in the `/lib/` directory. Please follow the SPAMS installation instructions for Linux and OSX. For Windows, it is easier to use SPAMS's binaries that can be downloaded from http://spams-devel.gforge.inria.fr/downloads.html
 
 #### Running
