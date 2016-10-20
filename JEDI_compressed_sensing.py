@@ -57,7 +57,7 @@ for trial in range(10):
         X_clean -= Xmean
 
         for m in ms:
-            pth = os.path.join('.','tmp',img_test[:-4],'m%d'%m)
+            pth = os.path.join('.','out_cs',img_test[:-4],'m%d'%m)
             if not os.path.exists(pth):
                 os.makedirs(pth)
             elif os.path.exists(os.path.join(pth,'t{0}.pickle'.format(trial))):
