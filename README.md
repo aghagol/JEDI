@@ -1,7 +1,7 @@
 # JEDI
 Joint Estimation of Dictionary and Image (from compressive samples)
 
-This is the source code for my paper that is under revision in IEEE-Transactions on Computaational Imaging. A draft of the paper is placed in `/doc/`.
+This is the source code for my paper that is under revision in IEEE-Transactions on Computational Imaging. A draft of the paper is placed in `/doc/`.
 
 #### Installation
 
