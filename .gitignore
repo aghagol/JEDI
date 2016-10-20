@@ -1,1 +1,4 @@
 *.pyc
+tmp*
+out*
+.DS_Store

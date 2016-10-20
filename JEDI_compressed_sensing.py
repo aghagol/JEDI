@@ -49,7 +49,7 @@ for trial in range(10):
         x /= 255.0
         X = MyTools.im2col(x,b)
         X_clean = np.array(X)
-        X += np.random.randn(*X.shape) * .05 #this is noise
+        # X += np.random.randn(*X.shape) * .05 #this is noise
         X[X>1] = 1.
         X[X<0] = 0.
         Xmean = np.mean(X,axis=0)
@@ -57,15 +57,15 @@ for trial in range(10):
         X_clean -= Xmean
 
         for m in ms:
-            pth = os.path.join('.','out_cs',img_test[:-4],'m%d'%m)
+            pth = os.path.join('.','tmp',img_test[:-4],'m%d'%m)
             if not os.path.exists(pth):
                 os.makedirs(pth)
             elif os.path.exists(os.path.join(pth,'t{0}.pickle'.format(trial))):
                 continue
             print 'trial={0}, m={1}, image={2}'.format(trial,m,img_test)
 
-            PSNR_noisy = -10*np.log10(np.power(X_clean-X,2).mean())
-            print 'initial PSNR = %fdB' % PSNR_noisy
+            # PSNR_noisy = -10*np.log10(np.power(X_clean-X,2).mean())
+            # print 'initial PSNR = %fdB' % PSNR_noisy
 
             PSNR = np.zeros((T,len(lams)))
             Verr = np.zeros((T,len(lams)))
@@ -84,7 +84,7 @@ for trial in range(10):
                     PSNR0[l] += np.power(X_clean[:,j]-xj,2).mean()
                     Verr0[l] += np.power(Vhi.dot(X[:,j]-xj),2).mean()
                 PSNR0[l] = -10 * np.log10(PSNR0[l] /N)
-                print img_test, m, lams[l], PSNR0[l], Verr0[l]
+                print 'image={0}, m={1}, lambda={2}, PSNR={3}, V-error={4}'.format(img_test, m, lams[l], PSNR0[l], Verr0[l])
 
                 # if lams[l] < .01:
                 #     Verr[:,l] = np.inf
@@ -126,10 +126,13 @@ for trial in range(10):
                         Verr[i,l] += np.power(Vhi.dot(X[:,j]-xj),2).mean()
                     eps *= k
                     PSNR[i,l] = -10 * np.log10(PSNR[i,l] /N)
-                    print i, PSNR[i,l], Verr[i,l]
+                    print 'iter={0}, PSNR={1}, V-error={2}'.format(i, PSNR[i,l], Verr[i,l])
 
             with open(os.path.join(pth,'t{0}.pickle'.format(trial)), 'w') as f:
-                pickle.dump([PSNR, Verr, PSNR0, Verr0, PSNR_noisy], f)
+                pickle.dump([PSNR, Verr, PSNR0, Verr0], f)
+
+            # with open(os.path.join(pth,'t{0}.pickle'.format(trial)), 'w') as f:
+            #     pickle.dump([PSNR, Verr, PSNR0, Verr0, PSNR_noisy], f)
 
 
 print 'all done'
