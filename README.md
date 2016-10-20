@@ -5,7 +5,7 @@ This is the source code for my paper that is under revision in IEEE-Transactions
 
 #### Installation
 
-I use [SPAMS](https://github.com/samuelstjean/spams-python) for LASSO optimization. Link to the SPAMS library is in the `/lib/` directory. Please follow the SPAMS installation instructions.
+I use [SPAMS](https://github.com/samuelstjean/spams-python) for LASSO optimization. SPAMS library is located in the `/lib/` directory. Please follow the SPAMS installation instructions for Linux and OSX. For Windows, it is easier to use SPAMS's binaries that can be downloaded from http://spams-devel.gforge.inria.fr/downloads.html
 
 #### Running
 
