@@ -1,3 +1,5 @@
+# usage: python JEDI_compressed_sensing.py path/to/output/folder
+
 import os, sys, pickle
 import numpy as np
 import scipy.sparse as ss
@@ -11,24 +13,33 @@ import pdb
 import warnings
 warnings.filterwarnings("ignore")
 
-elad = sio.loadmat('./globalTrainedDictionary.mat')
-D0 = elad['currDictionary']
+noisy = False
+
+# # K-SVD off-the-shelf initialization
+# elad = sio.loadmat('./globalTrainedDictionary.mat')
+# D0 = elad['currDictionary']
+
+# # DCT initialization
+# D0 = MyTools.dct2mtx(8)
+
+# random Gaussian initialization
+D0 = np.random.randn(64,256)
+D0 = D0 / np.sqrt((D0**2).sum(axis=0))
 
 n, p = D0.shape
 b = int(np.sqrt(n))
 N = 4096
-ms = [int(n*r)/2*2 for r in [.2, .35, .5, 1.]]
-# ms = [int(n*r)/2*2 for r in [1.]] #for denoising
 
-
-lams = [.001, .005, .01, .05, .1]
-# lams = [.005, .01, .05, .1, .15] # for noisy data
+if noisy:
+    ms = [int(n*r)/2*2 for r in [1.]]
+    lams = [.005, .01, .05, .1, .15]
+    k = 1.
+else:	
+    ms = [int(n*r)/2*2 for r in [.2, .35, .5, 1.]]
+    lams = [.001, .005, .01, .05, .1]
+    k = .95
 
 T = 40
-
-k = .95
-# k = 1. # for very noisy data
-
 alpha = .1
 
 eps = np.zeros(N)
@@ -49,7 +60,8 @@ for trial in range(10):
         x /= 255.0
         X = MyTools.im2col(x,b)
         X_clean = np.array(X)
-        # X += np.random.randn(*X.shape) * .05 #this is noise
+        if noisy:
+            X += np.random.randn(*X.shape) * .05
         X[X>1] = 1.
         X[X<0] = 0.
         Xmean = np.mean(X,axis=0)
@@ -57,15 +69,16 @@ for trial in range(10):
         X_clean -= Xmean
 
         for m in ms:
-            pth = os.path.join('.','out_cs',img_test[:-4],'m%d'%m)
+            pth = os.path.join('.',sys.argv[1],img_test[:-4],'m%d'%m)
             if not os.path.exists(pth):
                 os.makedirs(pth)
             elif os.path.exists(os.path.join(pth,'t{0}.pickle'.format(trial))):
                 continue
             print 'trial={0}, m={1}, image={2}'.format(trial,m,img_test)
 
-            # PSNR_noisy = -10*np.log10(np.power(X_clean-X,2).mean())
-            # print 'initial PSNR = %fdB' % PSNR_noisy
+            if noisy:
+            	PSNR_noisy = -10*np.log10(np.power(X_clean-X,2).mean())
+            	print 'initial PSNR = %fdB' % PSNR_noisy
 
             PSNR = np.zeros((T,len(lams)))
             Verr = np.zeros((T,len(lams)))
@@ -128,11 +141,14 @@ for trial in range(10):
                     PSNR[i,l] = -10 * np.log10(PSNR[i,l] /N)
                     print 'iter={0}, PSNR={1}, V-error={2}'.format(i, PSNR[i,l], Verr[i,l])
 
-            with open(os.path.join(pth,'t{0}.pickle'.format(trial)), 'w') as f:
-                pickle.dump([PSNR, Verr, PSNR0, Verr0], f)
+            if noisy:
+                with open(os.path.join(pth,'t{0}.pickle'.format(trial)), 'w') as f:
+                    pickle.dump([PSNR, Verr, PSNR0, Verr0, PSNR_noisy], f)
+            else:
+                with open(os.path.join(pth,'t{0}.pickle'.format(trial)), 'w') as f:
+                    pickle.dump([PSNR, Verr, PSNR0, Verr0], f)
 
-            # with open(os.path.join(pth,'t{0}.pickle'.format(trial)), 'w') as f:
-            #     pickle.dump([PSNR, Verr, PSNR0, Verr0, PSNR_noisy], f)
+            
 
 
 print 'all done'
