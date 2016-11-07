@@ -3,6 +3,7 @@ import numpy as np
 """ define some parameters """
 ssss = 'out/out_inpainting'
 m_choices = [12, 22, 32]
+T = 20
 """ list images """
 # img_list = set([it for it in os.listdir(os.path.join('..','clean')) if it[-4:] == '.png'])
 img_list = ['barbara','boat','finprint','grass','house',
@@ -36,7 +37,7 @@ for img_idx in range(len(img_list)):
         for t in temp:
             with open(os.path.join(datapath,t)) as ff:
                 PSNR, Verr, PSNR0, Verr0 = pickle.load(ff)
-                snr1 = PSNR.ravel()[Verr.argmin()]
+                snr1 = PSNR[T,2]
             psnr1.append(snr1)
         psnr1_avg = np.mean(psnr1)
         if m == m_choices[-1]:
@@ -51,7 +52,7 @@ for img_idx in range(len(img_list)):
         for t in temp:
             with open(os.path.join(datapath,t)) as ff:
                 PSNR, Verr, PSNR0, Verr0 = pickle.load(ff)
-                snr1 = PSNR.ravel()[Verr.argmin()]
+                snr1 = PSNR[T,2]
                 snr0 = PSNR0.ravel()[Verr0.argmin()]
             psnr1.append(snr1)
             psnr0.append(snr0)
