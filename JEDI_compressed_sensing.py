@@ -31,12 +31,12 @@ b = int(np.sqrt(n))
 N = 4096
 
 if noisy:
-    ms = [int(n*r)/2*2 for r in [1.]]
-    lams = [.005, .01, .05, .1, .15]
+    ms = [int(n*r)/2*2 for r in [.35, .5, 1.]]
+    lams = [.01, .05, .1, .15]
     k = 1.
-else:	
-    ms = [int(n*r)/2*2 for r in [.2, .35, .5, 1.]]
-    lams = [.001, .005, .01, .05, .1]
+else:
+    ms = [int(n*r)/2*2 for r in [.2, .35, .5]]
+    lams = [.01, .05, .1, .15]
     k = .95
 
 T = 40
@@ -148,7 +148,6 @@ for trial in range(10):
                 with open(os.path.join(pth,'t{0}.pickle'.format(trial)), 'w') as f:
                     pickle.dump([PSNR, Verr, PSNR0, Verr0], f)
 
-            
 
 
 print 'all done'
