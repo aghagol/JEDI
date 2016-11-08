@@ -1,8 +1,9 @@
 import os, sys, pickle
 import numpy as np
 """ define some parameters """
-ssss = 'out/out_cs'
-m_choices = [12, 22, 32]
+ssss = 'out/out_cs_noisy'
+m_choices = [12, 22, 32, 64]
+T = 20
 """ list images """
 # img_list = set([it for it in os.listdir(os.path.join('..','clean')) if it[-4:] == '.png'])
 img_list = ['barbara','boat','finprint','grass','house',
@@ -25,7 +26,7 @@ for img_idx in range(len(img_list)):
         temp = [it for it in os.listdir(datapath) if it.endswith('.pickle')]
         for t in temp:
             with open(os.path.join(datapath,t)) as ff:
-                PSNR, Verr, PSNR0, Verr0 = pickle.load(ff)
+                PSNR, Verr, PSNR0, Verr0, PSNR_noisy = pickle.load(ff)
                 snr0 = PSNR0.ravel()[Verr0.argmin()]
             psnr0.append(snr0)
         psnr0_avg = np.mean(psnr0)
@@ -40,8 +41,8 @@ for img_idx in range(len(img_list)):
         temp = [it for it in os.listdir(datapath) if it.endswith('.pickle')]
         for t in temp:
             with open(os.path.join(datapath,t)) as ff:
-                PSNR, Verr, PSNR0, Verr0 = pickle.load(ff)
-                snr1 = PSNR.ravel()[Verr.argmin()]
+                PSNR, Verr, PSNR0, Verr0, PSNR_noisy = pickle.load(ff)
+                snr1 = PSNR[T,2]
             psnr1.append(snr1)
         psnr1_avg = np.mean(psnr1)
         psnr1_all[img_idx,m_idx] = psnr1_avg
@@ -56,8 +57,8 @@ for img_idx in range(len(img_list)):
         temp = [it for it in os.listdir(datapath) if it.endswith('.pickle')]
         for t in temp:
             with open(os.path.join(datapath,t)) as ff:
-                PSNR, Verr, PSNR0, Verr0 = pickle.load(ff)
-                snr1 = PSNR.ravel()[Verr.argmin()]
+                PSNR, Verr, PSNR0, Verr0, PSNR_noisy = pickle.load(ff)
+                snr1 = PSNR[T,2]
                 snr0 = PSNR0.ravel()[Verr0.argmin()]
             psnr1.append(snr1)
             psnr0.append(snr0)
@@ -72,15 +73,19 @@ f.write(r'\hline {\bf Avg.} & ')
 f.write(r'{\bf %.2f} & ' % psnr0_all.mean(axis=0)[0])
 f.write(r'{\bf %.2f} & ' % psnr0_all.mean(axis=0)[1])
 f.write(r'{\bf %.2f} & ' % psnr0_all.mean(axis=0)[2])
+f.write(r'{\bf %.2f} & ' % psnr0_all.mean(axis=0)[3])
 
 f.write(r'{\bf %.2f} & ' % psnr1_all.mean(axis=0)[0])
 f.write(r'{\bf %.2f} & ' % psnr1_all.mean(axis=0)[1])
 f.write(r'{\bf %.2f} & ' % psnr1_all.mean(axis=0)[2])
+f.write(r'{\bf %.2f} & ' % psnr1_all.mean(axis=0)[3])
 
 f.write(r'{\bf %.2f} & ' % (psnr1_all.mean(axis=0)[0] - psnr0_all.mean(axis=0)[0]))
 f.write(r'{\bf %.2f} & ' % (psnr1_all.mean(axis=0)[1] - psnr0_all.mean(axis=0)[1]))
-f.write(r'{\bf %.2f}   ' % (psnr1_all.mean(axis=0)[2] - psnr0_all.mean(axis=0)[2]))
+f.write(r'{\bf %.2f} & ' % (psnr1_all.mean(axis=0)[2] - psnr0_all.mean(axis=0)[2]))
+f.write(r'{\bf %.2f}   ' % (psnr1_all.mean(axis=0)[3] - psnr0_all.mean(axis=0)[3]))
 f.write('\\\\ \n')
+
 f.close()
 
 
